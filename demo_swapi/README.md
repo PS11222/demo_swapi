@@ -1,16 +1,26 @@
-# demo_swapi
+# Demo SWAPI - Star Wars Characters App
 
-A new Flutter project.
+Aplikacja Flutter prezentująca listę postaci z uniwersum Gwiezdnych Wojen, wykorzystująca [SWAPI (Star Wars API)](https://swapi.dev/). Aplikacja została zbudowana z wykorzystaniem architektury Clean Architecture, wzorca BLoC do zarządzania stanem.
 
-## Getting Started
+### Wersja Flutter
+- **Flutter**: 3.35.4
+- **Dart SDK**: 3.9.2
 
-This project is a starting point for a Flutter application.
+## Instalacja
 
-A few resources to get you started if this is your first Flutter project:
+1. **Zainstaluj zależności**
+   ```
+   flutter pub get
+   ```
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+## Uruchomienie aplikacji
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. **Wygeneruj kod**
+   ```
+   dart run build_runner build --delete-conflicting-outputs
+   ```
+
+2. **Uruchom aplikację**
+   ```
+   flutter run
+   ```
