@@ -17,19 +17,37 @@ class PeoplePage extends StatefulWidget {
 
 class _PeoplePageState extends State<PeoplePage> {
   final TextEditingController _searchController = TextEditingController();
+  final ScrollController _scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
     context.read<PeopleBloc>().add(const PeopleEvent.loadPeople(page: 1));
     _searchController.addListener(_onSearchChanged);
+    _scrollController.addListener(_onScroll);
   }
 
   @override
   void dispose() {
     _searchController.removeListener(_onSearchChanged);
     _searchController.dispose();
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     super.dispose();
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels >= _scrollController.position.maxScrollExtent - 200) {
+      final state = context.read<PeopleBloc>().state;
+      state.maybeMap(
+        loaded: (loadedState) {
+          if (!loadedState.isLoadingMore && loadedState.people.next != null) {
+            context.read<PeopleBloc>().add(const PeopleEvent.loadMorePeople());
+          }
+        },
+        orElse: () {},
+      );
+    }
   }
 
   void _onSearchChanged() {
@@ -73,11 +91,18 @@ class _PeoplePageState extends State<PeoplePage> {
                 return state.when(
                   initial: () => const SizedBox.shrink(),
                   loading: () => const Center(child: CircularProgressIndicator()),
-                  loaded: (people) => people.results.isEmpty
+                  loaded: (people, isLoadingMore) => people.results.isEmpty
                       ? const Center(child: Text('No results found'))
                       : ListView.builder(
-                          itemCount: people.results.length,
+                          controller: _scrollController,
+                          itemCount: people.results.length + (isLoadingMore ? 1 : 0),
                           itemBuilder: (context, index) {
+                            if (index == people.results.length) {
+                              return const Padding(
+                                padding: EdgeInsets.all(16.0),
+                                child: Center(child: CircularProgressIndicator()),
+                              );
+                            }
                             final person = people.results[index];
                             return _PersonListItem(
                               person: person,

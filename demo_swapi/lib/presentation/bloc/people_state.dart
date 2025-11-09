@@ -7,7 +7,6 @@ part 'people_state.freezed.dart';
 class PeopleState with _$PeopleState {
   const factory PeopleState.initial() = _Initial;
   const factory PeopleState.loading() = _Loading;
-  const factory PeopleState.loaded(PeopleEntity people) = _Loaded;
+  const factory PeopleState.loaded(PeopleEntity people, {@Default(false) bool isLoadingMore}) = _Loaded;
   const factory PeopleState.error(String message) = _Error;
 }
-

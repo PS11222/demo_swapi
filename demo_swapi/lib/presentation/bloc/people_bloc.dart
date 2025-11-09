@@ -1,6 +1,7 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:stream_transform/stream_transform.dart';
 import 'package:demo_swapi/domain/use_cases/get_people_use_case.dart';
+import 'package:demo_swapi/domain/entities/people_entity.dart';
 import 'package:demo_swapi/presentation/bloc/people_state.dart';
 import 'package:demo_swapi/presentation/bloc/people_event.dart';
 
@@ -12,20 +13,61 @@ class PeopleBloc extends Bloc<PeopleEvent, PeopleState> {
   PeopleBloc(this._getPeopleUseCase) : super(const PeopleState.initial()) {
     on<PeopleEventSearch>(_onSearchPeople, transformer: debounce());
     on<PeopleEventLoadPeople>(_onLoadPeople);
+    on<PeopleEventLoadMorePeople>(_onLoadMorePeople);
     on<PeopleEventClearSearch>(_onClearSearch);
   }
 
   final GetPeopleUseCase _getPeopleUseCase;
   String _lastSearchText = '';
+  int _currentPage = 1;
+  String? _currentSearch;
 
   Future<void> _onLoadPeople(PeopleEventLoadPeople event, Emitter<PeopleState> emit) async {
     emit(const PeopleState.loading());
     try {
-      final people = await _getPeopleUseCase(page: event.page, search: event.search);
-      emit(PeopleState.loaded(people));
+      _currentPage = event.page ?? 1;
+      _currentSearch = event.search;
+      final people = await _getPeopleUseCase(page: _currentPage, search: _currentSearch);
+      emit(PeopleState.loaded(people, isLoadingMore: false));
     } catch (e) {
       emit(PeopleState.error(e.toString()));
     }
+  }
+
+  Future<void> _onLoadMorePeople(PeopleEventLoadMorePeople event, Emitter<PeopleState> emit) async {
+    final currentState = state;
+    await currentState.maybeMap(
+      loaded: (loadedState) async {
+        final currentPeople = loadedState.people;
+
+        if (currentPeople.next == null) {
+          return;
+        }
+
+        if (loadedState.isLoadingMore) {
+          return;
+        }
+
+        emit(PeopleState.loaded(currentPeople, isLoadingMore: true));
+
+        try {
+          _currentPage++;
+          final newPeople = await _getPeopleUseCase(page: _currentPage, search: _currentSearch);
+          final combinedResults = [...currentPeople.results, ...newPeople.results];
+          final combinedPeople = PeopleEntity(
+            count: newPeople.count,
+            next: newPeople.next,
+            previous: newPeople.previous,
+            results: combinedResults,
+          );
+
+          emit(PeopleState.loaded(combinedPeople, isLoadingMore: false));
+        } catch (e) {
+          emit(PeopleState.loaded(currentPeople, isLoadingMore: false));
+        }
+      },
+      orElse: () {},
+    );
   }
 
   Future<void> _onSearchPeople(PeopleEventSearch event, Emitter<PeopleState> emit) async {
