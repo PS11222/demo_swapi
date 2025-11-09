@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:demo_swapi/core/di/di.dart';
 import 'package:demo_swapi/core/router/app_router.dart';
+import 'package:demo_swapi/core/theme/star_wars_theme.dart';
 import 'package:demo_swapi/presentation/bloc/people_bloc.dart';
 
 final appRouter = AppRouter();
@@ -19,8 +20,9 @@ class MyApp extends StatelessWidget {
     return MultiBlocProvider(
       providers: [BlocProvider<PeopleBloc>(create: (_) => getIt<PeopleBloc>())],
       child: MaterialApp.router(
-        title: 'Flutter Demo',
-        theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
+        debugShowCheckedModeBanner: false,
+        title: 'Star Wars Characters',
+        theme: StarWarsTheme.darkTheme,
         routerConfig: appRouter.config(),
       ),
     );
