@@ -59,7 +59,7 @@ class _PeoplePageState extends State<PeoplePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('STAR WARS CHARACTERS'), centerTitle: true),
+      appBar: AppBar(title: FittedBox(child: const Text('STAR WARS CHARACTERS')), centerTitle: true),
       body: SafeArea(
         child: Column(
           children: [
