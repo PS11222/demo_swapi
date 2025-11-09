@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:demo_swapi/core/di/di.dart';
+import 'package:demo_swapi/core/router/app_router.dart';
 import 'package:demo_swapi/presentation/bloc/people_cubit.dart';
-import 'package:demo_swapi/presentation/pages/people_page.dart';
+
+final appRouter = AppRouter();
 
 void main() {
   configureDependencies();
@@ -16,10 +18,10 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MultiBlocProvider(
       providers: [BlocProvider<PeopleCubit>(create: (_) => getIt<PeopleCubit>())],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'Flutter Demo',
         theme: ThemeData(colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple)),
-        home: const PeoplePage(),
+        routerConfig: appRouter.config(),
       ),
     );
   }
