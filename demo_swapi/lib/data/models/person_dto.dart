@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'person_dto.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(fieldRename: FieldRename.snake)
 class PersonDto {
   const PersonDto({
     required this.name,

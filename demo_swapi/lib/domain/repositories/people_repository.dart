@@ -1,5 +1,5 @@
-import 'package:demo_swapi/data/models/people_response_dto.dart';
+import 'package:demo_swapi/domain/entities/people_entity.dart';
 
 abstract class PeopleRepository {
-  Future<PeopleResponseDto> getPeople({int? page, String? search});
+  Future<PeopleEntity> getPeople({int? page, String? search});
 }
