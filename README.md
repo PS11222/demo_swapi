@@ -1,6 +1,6 @@
 # Demo SWAPI - Star Wars Characters App
 
-Aplikacja Flutter prezentująca listę postaci z uniwersum Gwiezdnych Wojen, wykorzystująca [SWAPI (Star Wars API)](https://swapi.dev/). Aplikacja została zbudowana z wykorzystaniem architektury Clean Architecture, wzorca BLoC do zarządzania stanem.
+Aplikacja Flutter prezentująca listę postaci z uniwersum Gwiezdnych Wojen, wykorzystująca [SWAPI (Star Wars API)](https://swapi.dev/). Aplikacja została zbudowana z wykorzystaniem architektury Clean Architecture oraz wzorca BLoC do zarządzania stanem.
 
 ### Wersja Flutter
 - **Flutter**: 3.35.4
