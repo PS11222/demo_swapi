@@ -31,6 +31,8 @@ dev_dependencies:
   json_serializable: ^6.8.0
   retrofit_generator: ^9.7.0
   auto_route_generator: ^9.0.0
+  bloc_test: ^9.1.7
+  mocktail: ^1.0.4
 
 flutter:
   uses-material-design: true
