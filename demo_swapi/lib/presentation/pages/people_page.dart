@@ -58,80 +58,82 @@ class _PeoplePageState extends State<PeoplePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Star Wars Characters'), centerTitle: true),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search characters...',
-                prefixIcon: const Icon(Icons.search),
-                suffixIcon: ValueListenableBuilder<TextEditingValue>(
-                  valueListenable: _searchController,
-                  builder: (context, value, child) {
-                    return value.text.isNotEmpty
-                        ? IconButton(
-                            icon: const Icon(Icons.clear),
-                            onPressed: () {
-                              _searchController.clear();
-                              context.read<PeopleBloc>().add(const PeopleEvent.clearSearch());
-                            },
-                          )
-                        : const SizedBox.shrink();
-                  },
+      body: SafeArea(
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: TextField(
+                controller: _searchController,
+                decoration: InputDecoration(
+                  hintText: 'Search characters...',
+                  prefixIcon: const Icon(Icons.search),
+                  suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                    valueListenable: _searchController,
+                    builder: (context, value, child) {
+                      return value.text.isNotEmpty
+                          ? IconButton(
+                              icon: const Icon(Icons.clear),
+                              onPressed: () {
+                                _searchController.clear();
+                                context.read<PeopleBloc>().add(const PeopleEvent.clearSearch());
+                              },
+                            )
+                          : const SizedBox.shrink();
+                    },
+                  ),
+                  border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                 ),
-                border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
               ),
             ),
-          ),
-          Expanded(
-            child: BlocBuilder<PeopleBloc, PeopleState>(
-              builder: (context, state) {
-                return state.when(
-                  initial: () => const SizedBox.shrink(),
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  loaded: (people, isLoadingMore) => people.results.isEmpty
-                      ? const Center(child: Text('No results found'))
-                      : ListView.builder(
-                          controller: _scrollController,
-                          itemCount: people.results.length + (isLoadingMore ? 1 : 0),
-                          itemBuilder: (context, index) {
-                            if (index == people.results.length) {
-                              return const Padding(
-                                padding: EdgeInsets.all(16.0),
-                                child: Center(child: CircularProgressIndicator()),
+            Expanded(
+              child: BlocBuilder<PeopleBloc, PeopleState>(
+                builder: (context, state) {
+                  return state.when(
+                    initial: () => const SizedBox.shrink(),
+                    loading: () => const Center(child: CircularProgressIndicator()),
+                    loaded: (people, isLoadingMore) => people.results.isEmpty
+                        ? const Center(child: Text('No results found'))
+                        : ListView.builder(
+                            controller: _scrollController,
+                            itemCount: people.results.length + (isLoadingMore ? 1 : 0),
+                            itemBuilder: (context, index) {
+                              if (index == people.results.length) {
+                                return const Padding(
+                                  padding: EdgeInsets.all(16.0),
+                                  child: Center(child: CircularProgressIndicator()),
+                                );
+                              }
+                              final person = people.results[index];
+                              return _PersonListItem(
+                                person: person,
+                                onTap: () {
+                                  context.router.push(PersonDetailRoute(person: person));
+                                },
                               );
-                            }
-                            final person = people.results[index];
-                            return _PersonListItem(
-                              person: person,
-                              onTap: () {
-                                context.router.push(PersonDetailRoute(person: person));
-                              },
-                            );
-                          },
-                        ),
-                  error: (message) => Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Text('Error: $message'),
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () {
-                            context.read<PeopleBloc>().add(PeopleEvent.searchPeople(_searchController.text));
-                          },
-                          child: const Text('Retry'),
-                        ),
-                      ],
+                            },
+                          ),
+                    error: (message) => Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Text('Error: $message'),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: () {
+                              context.read<PeopleBloc>().add(PeopleEvent.searchPeople(_searchController.text));
+                            },
+                            child: const Text('Retry'),
+                          ),
+                        ],
+                      ),
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
